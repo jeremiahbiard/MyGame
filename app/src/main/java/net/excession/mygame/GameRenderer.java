@@ -1,16 +1,15 @@
 package net.excession.mygame;
 
 import android.content.Context;
-import android.opengl.EGLConfig;
+// import android.opengl.EGLConfig;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.util.Log;
 
-import java.lang.reflect.GenericArrayType;
-
-import javax.microedition.khronos.opengles.GL;
+import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
+
 
 /**
  * Created by Jeremiah Biard on 9/30/18.
@@ -34,7 +33,6 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
         starfield = new Starfield();
-
     }
 
     @Override
@@ -44,7 +42,6 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         float ratio = (float) width / height;
 
         Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1, 1, 3, 7);
-
     }
 
     @Override
@@ -57,7 +54,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
 
-        starfield.draw(mMVPMatrix);
+        starfield.draw(mMVPMatrix, 0);
     }
 
     public static int loadShader(int type, String shaderCode) {
@@ -76,6 +73,4 @@ public class GameRenderer implements GLSurfaceView.Renderer {
             throw new RuntimeException(glOperation + ": glError " + error);
         }
     }
-
-
 }
