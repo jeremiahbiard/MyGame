@@ -7,6 +7,8 @@ import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.util.Log;
 
+import java.nio.IntBuffer;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -23,6 +25,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
     public static float[] mViewMatrix = new float[16];
 
     private Starfield starfield;
+    private float starfieldScroll = 0;
 
     public GameRenderer(Context gameContext) {
         context = gameContext;
@@ -33,6 +36,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
         starfield = new Starfield();
+        starfield.loadTexture(R.drawable.starfield, context);
     }
 
     @Override
@@ -54,7 +58,12 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
 
-        starfield.draw(mMVPMatrix, 0);
+        starfield.draw(mMVPMatrix, starfieldScroll);
+
+        if (starfieldScroll == Float.MAX_VALUE) {
+            starfieldScroll = 0;
+        }
+         starfieldScroll += .001;
     }
 
     public static int loadShader(int type, String shaderCode) {
@@ -62,6 +71,18 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 
         GLES20.glShaderSource(shader, shaderCode);
         GLES20.glCompileShader(shader);
+
+        // Test wether or not the shader compiled correctly
+        IntBuffer glCompileStatusBuffer = IntBuffer.allocate(1);
+        GLES20.glGetShaderiv(shader, GLES20.GL_COMPILE_STATUS, glCompileStatusBuffer);
+        int compilationStatus = glCompileStatusBuffer.get(0);
+        Log.e("SUCCESS", " success = " + compilationStatus);
+
+        if (compilationStatus == GLES20.GL_FALSE) {
+            GLES20.glDeleteShader(shader);
+            throw new RuntimeException("Shader compilation failed: " + GLES20.glGetShaderInfoLog(shader) + " | " + shaderCode);
+
+        }
 
         return shader;
     }
