@@ -30,6 +30,15 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 
     float starfieldScroll = 0;
     float heroSprite = 0;
+    float heroMove = 0;
+
+    public void setHeroMove(float movement) {
+        heroMove = movement;
+    }
+
+    public float getHeroMove() {
+        return heroMove;
+    }
 
     public GameRenderer(Context gameContext) {
         context = gameContext;
@@ -70,7 +79,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         GLES20.glEnable(GLES20.GL_BLEND);
         GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
         Matrix.setIdentityM(mTranslationMatrix, 0);
-        Matrix.translateM(mTranslationMatrix, 0, 0, -.5f, 0);
+        Matrix.translateM(mTranslationMatrix, 0, heroMove, -.5f, 0);
 
         Matrix.multiplyMM(matrix, 0, mMVPMatrix, 0, mTranslationMatrix, 0);
         hero.draw(matrix, 0, 0);
