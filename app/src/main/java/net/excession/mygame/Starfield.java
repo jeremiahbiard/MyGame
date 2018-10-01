@@ -95,7 +95,8 @@ public class Starfield {
         drawListBuffer.position(0);
 
         int vertexShader = GameRenderer.loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
-        // TODO: Figure out why the following call is failing :/
+        // DONE: Figure out why the following call is failing :/
+        // There was a syntax error in the shader code :X
         int fragmentShader = GameRenderer.loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
 
         mProgram = GLES20.glCreateProgram();
