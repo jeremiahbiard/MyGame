@@ -23,9 +23,13 @@ public class GameRenderer implements GLSurfaceView.Renderer {
     public static float[] mMVPMatrix = new float[16];
     public static float[] mProjectionMatrix = new float[16];
     public static float[] mViewMatrix = new float[16];
+    public static float[] mTranslationMatrix = new float[16];
 
     private Starfield starfield;
-    private float starfieldScroll = 0;
+    private Hero hero;
+
+    float starfieldScroll = 0;
+    float heroSprite = 0;
 
     public GameRenderer(Context gameContext) {
         context = gameContext;
@@ -36,7 +40,10 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
         starfield = new Starfield();
+        hero = new Hero();
+
         starfield.loadTexture(R.drawable.starfield, context);
+        hero.loadTexture(R.drawable.ships, context);
     }
 
     @Override
@@ -59,6 +66,16 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
 
         starfield.draw(mMVPMatrix, starfieldScroll);
+
+        GLES20.glEnable(GLES20.GL_BLEND);
+        GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
+        Matrix.setIdentityM(mTranslationMatrix, 0);
+        Matrix.translateM(mTranslationMatrix, 0, 0, -.5f, 0);
+
+        Matrix.multiplyMM(matrix, 0, mMVPMatrix, 0, mTranslationMatrix, 0);
+        hero.draw(matrix, 0, 0);
+
+        GLES20.glDisable(GLES20.GL_BLEND);
 
         if (starfieldScroll == Float.MAX_VALUE) {
             starfieldScroll = 0;
